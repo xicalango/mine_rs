@@ -2,12 +2,10 @@ extern crate mine_rs;
 
 fn main() {
 
-    let dim = mine_rs::Dimension { width: 10, height: 10 };
-    
+    let mine_field = mine_rs::MineField::new(3, 3);
 
-    let mineField = mine_rs::MineField::new(&dim);
+    println!("{:?}", mine_field );
 
-    let game = mine_rs::Game::new(mineField);
 
 
 

@@ -1,8 +1,10 @@
 extern crate rand;
 
+use std::rc::Rc;
+
 #[derive(Debug)]
-pub struct Field<'a, T> {
-    dim: &'a Dimension,
+pub struct Field<T> {
+    dim: Rc<Dimension>,
     field: Vec<T>
 }
 
@@ -17,23 +19,25 @@ fn get_index(dim: &Dimension, x: usize, y: usize) -> usize {
     dim.width * y + x
 }
 
-impl <'a, T: Copy> Access2D<T> for Field<'a, T> {
+impl <T: Copy> Access2D<T> for Field<T> {
 
     fn get_at(&self, x: usize, y: usize) -> T {
-        self.field[ get_index( self.dim, x, y ) ]
+        self.field[ get_index( &self.dim, x, y ) ]
     }
 
     fn set_at(&mut self, x: usize, y: usize, value: T) {
-        self.field[ get_index( self.dim, x, y ) ] = value;
+        self.field[ get_index( &self.dim, x, y ) ] = value;
     }
 }
 
-impl <'a, T: Copy + Default> Field<'a, T> {
+impl <T: Copy + Default> Field<T> {
 
-    pub fn new(dim: &'a Dimension) -> Field<'a, T> {
+    pub fn new(dim: Rc<Dimension>) -> Field<T> {
+        let width = dim.width;
+        let height = dim.height;
         Field {
             dim: dim,
-            field: vec![T::default(); dim.width * dim.height] 
+            field: vec![T::default(); width * height] 
         }
     }
 
@@ -46,22 +50,24 @@ pub struct Dimension {
 }
 
 #[derive(Debug)]
-pub struct MineField<'a> {
+pub struct MineField {
 
-    dim: &'a Dimension,
+    dim: Rc<Dimension>,
 
-    mines: Field<'a, bool>,
-    shadow: Field<'a, bool>,
-    num: Field<'a, u8>
+    mines: Field<bool>,
+    shadow: Field<bool>,
+    num: Field<u8>
 }
 
-impl <'a> MineField<'a> {
+impl MineField {
 
-    pub fn new(dim: &'a Dimension) -> MineField<'a> {
+    pub fn new(width: usize, height: usize) -> MineField {
 
-        let mines = Field::new(&dim);
-        let shadow = Field::new(&dim);
-        let num = Field::new(&dim);
+        let dim = Rc::new(Dimension{ width: width, height: height });
+
+        let mines = Field::new(dim.clone());
+        let shadow = Field::new(dim.clone());
+        let num = Field::new(dim.clone());
 
         MineField {
             dim: dim,
@@ -69,12 +75,6 @@ impl <'a> MineField<'a> {
             shadow: shadow,
             num: num
         }
-    }
-
-    pub fn init(&mut self, num_mines: u32) {
-
-        let width_range =         
-
     }
 
 }
