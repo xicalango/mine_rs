@@ -1,0 +1,13 @@
+[package]
+name = "mine_rs"
+version = "0.1.0"
+authors = ["alexx"]
+
+[dependencies]
+rand = "*"
+
+[lib]
+name = "mine_rs"
+
+[[bin]]
+name = "mine_rs"
